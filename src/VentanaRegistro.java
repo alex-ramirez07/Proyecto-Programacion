@@ -1,107 +1,128 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.io.*;
 import java.util.Date;
-import com.toedter.calendar.JDateChooser;
-import java.util.Date;
-
 import com.toedter.calendar.JDateChooser;
 
 public class VentanaRegistro extends JFrame {
 
-    private JTextField txtIdUsuario, txtNombre, txtApellido, txtFechaNacimiento, txtBarrio, txtTelefono;
+    private JTextField txtIdUsuario, txtNombre, txtApellido, txtBarrio, txtTelefono;
     private JPasswordField txtPassword;
     private JButton btnRegistrar, btnCancelar;
+    private JDateChooser dateChooser;
 
     public VentanaRegistro() {
         setTitle("Registro de Usuario");
-        setSize(400, 400);
+        setSize(400, 500);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE); // cierra solo esta ventana
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Panel principal
-        JPanel panel = new JPanel(new GridLayout(8, 2, 5, 5));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        // ----------- LOGO ARRIBA -----------
+        ImageIcon logoIcon = new ImageIcon(getClass().getResource("imagenes/logoapp.png"));
+        Image img = logoIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+        logoIcon = new ImageIcon(img);
 
-        panel.add(new JLabel("ID Usuario:"));
-        txtIdUsuario = new JTextField();
-        panel.add(txtIdUsuario);
+        JLabel logoLabel = new JLabel(logoIcon, SwingConstants.CENTER);
+        add(logoLabel, BorderLayout.NORTH);
 
-        panel.add(new JLabel("Nombre:"));
-        txtNombre = new JTextField();
-        panel.add(txtNombre);
+        // ----------- PANEL DE REGISTRO -----------
+        JPanel registroPanel = new JPanel(new GridBagLayout());
+        registroPanel.setBorder(BorderFactory.createTitledBorder("Registrar nuevo usuario"));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        panel.add(new JLabel("Apellido:"));
-        txtApellido = new JTextField();
-        panel.add(txtApellido);
+        gbc.gridx = 0; gbc.gridy = 0;
+        registroPanel.add(new JLabel("ID Usuario:"), gbc);
+        txtIdUsuario = new JTextField(15);
+        gbc.gridx = 1;
+        registroPanel.add(txtIdUsuario, gbc);
 
-        JLabel lblFecha = new JLabel("Fecha de Nacimiento:");
+        gbc.gridx = 0; gbc.gridy = 1;
+        registroPanel.add(new JLabel("Nombre:"), gbc);
+        txtNombre = new JTextField(15);
+        gbc.gridx = 1;
+        registroPanel.add(txtNombre, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 2;
+        registroPanel.add(new JLabel("Apellido:"), gbc);
+        txtApellido = new JTextField(15);
+        gbc.gridx = 1;
+        registroPanel.add(txtApellido, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 3;
+        registroPanel.add(new JLabel("Fecha de Nacimiento:"), gbc);
         dateChooser = new JDateChooser();
         dateChooser.setDateFormatString("dd/MM/yyyy");
-        panel.add(lblFecha);
-        panel.add(dateChooser);
+        gbc.gridx = 1;
+        registroPanel.add(dateChooser, gbc);
 
-        panel.add(new JLabel("Barrio:"));
-        txtBarrio = new JTextField();
-        panel.add(txtBarrio);
+        gbc.gridx = 0; gbc.gridy = 4;
+        registroPanel.add(new JLabel("Barrio:"), gbc);
+        txtBarrio = new JTextField(15);
+        gbc.gridx = 1;
+        registroPanel.add(txtBarrio, gbc);
 
-        panel.add(new JLabel("Teléfono:"));
-        txtTelefono = new JTextField();
-        panel.add(txtTelefono);
+        gbc.gridx = 0; gbc.gridy = 5;
+        registroPanel.add(new JLabel("Teléfono:"), gbc);
+        txtTelefono = new JTextField(15);
+        gbc.gridx = 1;
+        registroPanel.add(txtTelefono, gbc);
 
-        panel.add(new JLabel("Contraseña:"));
-        txtPassword = new JPasswordField();
-        panel.add(txtPassword);
+        gbc.gridx = 0; gbc.gridy = 6;
+        registroPanel.add(new JLabel("Contraseña:"), gbc);
+        txtPassword = new JPasswordField(15);
+        gbc.gridx = 1;
+        registroPanel.add(txtPassword, gbc);
 
-        add(panel, BorderLayout.CENTER);
+        add(registroPanel, BorderLayout.CENTER);
 
-        // Botones
-        JPanel panelBotones = new JPanel(new FlowLayout());
+        // ----------- BOTONES ABAJO -----------
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btnRegistrar = new JButton("Registrar");
         btnCancelar = new JButton("Cancelar");
         panelBotones.add(btnRegistrar);
         panelBotones.add(btnCancelar);
-
         add(panelBotones, BorderLayout.SOUTH);
 
-        // Acción Registrar
+        // ----------- EVENTOS -----------
         btnRegistrar.addActionListener(e -> registrarUsuario());
-
-        // Acción Cancelar
-        btnCancelar.addActionListener(e -> dispose());
+        btnCancelar.addActionListener(e -> {
+            new VentanaLogin().setVisible(true);
+            dispose();
+        });
     }
 
-    private JDateChooser dateChooser;
     private void registrarUsuario() {
-
-        String id = txtIdUsuario.getText();
-        String nombre = txtNombre.getText();
-        String apellido = txtApellido.getText();
+        String id = txtIdUsuario.getText().trim();
+        String nombre = txtNombre.getText().trim();
+        String apellido = txtApellido.getText().trim();
         Date fechaNacimiento = dateChooser.getDate();
-        String barrio = txtBarrio.getText();
-        String telefono = txtTelefono.getText();
+        String barrio = txtBarrio.getText().trim();
+        String telefono = txtTelefono.getText().trim();
         String pass = new String(txtPassword.getPassword());
 
-        if(id.isEmpty() || nombre.isEmpty() || apellido.isEmpty() ||
-                fechaNacimiento==null || barrio.isEmpty() || telefono.isEmpty() || pass.isEmpty()) {
+        if (id.isEmpty() || nombre.isEmpty() || apellido.isEmpty() ||
+                fechaNacimiento == null || barrio.isEmpty() || telefono.isEmpty() || pass.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "Por favor complete todos los campos.",
                     "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Por ahora solo mostramos los datos
-        JOptionPane.showMessageDialog(this,
-                "Usuario registrado:\n" +
-                        "ID: " + id + "\n" +
-                        "Nombre: " + nombre + " " + apellido + "\n" +
-                        "Fecha Nac: " + fechaNacimiento+ "\n" +
-                        "Barrio: " + barrio + "\n" +
-                        "Teléfono: " + telefono,
-                "Registro exitoso",
-                JOptionPane.INFORMATION_MESSAGE);
+        // Guardar en archivo (persistencia)
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("usuarios.txt", true))) {
+            bw.write(id + "," + nombre + "," + apellido + "," + fechaNacimiento + "," + barrio + "," + telefono + "," + pass);
+            bw.newLine();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error al guardar usuario.");
+            return;
+        }
 
-        dispose(); // cerrar la ventana después de registrar
+        JOptionPane.showMessageDialog(this, "Usuario registrado correctamente.");
+        new VentanaLogin().setVisible(true);
+        dispose();
     }
+
 }

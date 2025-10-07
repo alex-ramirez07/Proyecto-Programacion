@@ -1,10 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
+import java.util.*;
 
 public class VentanaLogin extends JFrame {
     private JTextField txtIdUsuario;
     private JPasswordField txtPassword;
     private JButton btnLogin, btnCrearCuenta;
+
 
     public VentanaLogin() {
         setTitle("Login");
@@ -61,11 +64,10 @@ public class VentanaLogin extends JFrame {
 
         // ----------- EVENTOS -----------
         btnLogin.addActionListener(e -> {
-            String id = txtIdUsuario.getText();
+            String id = txtIdUsuario.getText().trim();
             String pass = new String(txtPassword.getPassword());
 
-            // Validación simple
-            if (id.equals("123") && pass.equals("123")) {
+            if (validarUsuario(id, pass)) {
                 JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso");
                 new VentanaCitas(id).setVisible(true);
                 dispose();
@@ -82,7 +84,25 @@ public class VentanaLogin extends JFrame {
         });
     }
 
+    // ----------- VALIDAR USUARIO CON ARCHIVO -----------
+    private boolean validarUsuario(String id, String pass) {
+        try (BufferedReader br = new BufferedReader(new FileReader("usuarios.txt"))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(",");
+                if (datos.length >= 2 && datos[0].equals(id) && datos[6].equals(pass)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("No se pudo leer el archivo de usuarios.");
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new VentanaLogin().setVisible(true));
     }
+
+
 }
